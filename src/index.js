@@ -3,39 +3,44 @@ const app = express();
 const http = require('http').Server(app);
 
 const port = process.env.PORT || 8080;
+
+// db provides the query(), insert(), and update() functions.
 const db = require('./db')
 
-
-console.log("Server running!")
-
-
-app.get('/', (req, res) => {
+// Tester route to make sure the server runs.
+/* app.get('/', (req, res) => {
   res.json({ you: "are on the root page"})
-});
+}); */
 
-app.get('/api/users', (req, res) => {
+// Tester route to make sure the DB is seeded.
+/* app.get('/api/users', (req, res) => {
   db.query(`SELECT * FROM users`, [])
     .then(rows => res.json(rows))
+}) */
+
+app.post('/api/login', (req,res) => {
+  // Attempt to login a user with a username and password.
+  // Set a cookie if the login is successful.
 })
 
-app.get('/api/games', (req, res) => {
-  db.query(`SELECT * FROM games`, [])
-    .then(rows => res.json(rows))
+app.post('/api/users', (req, res) => {
+  // Register a new user with username and password.
+  // Hash the password first!
+  // Set a cookie if the registration is successful.
 })
 
-app.get('/api/boards', (req, res) => {
-  db.query(`SELECT * FROM boards`, [])
-    .then(rows => res.json(rows))
+app.post('/api/projects', (req, res) => {
+  // Create a new project for the currently-logged-in user.
 })
 
-app.get('/api/rulesets', (req, res) => {
-  db.query(`SELECT * FROM rulesets`, [])
-    .then(rows => res.json(rows))
+app.post('/api/blocks', (req, res) => {
+  // Create a new block for the currently-logged-in user.
+  // Get the project ID from the request.
 })
 
-app.get('/backend-test', (req, res) => {
-  res.send({ msg: 'Successful connection!' })
-});
-
+app.post('/api/sessions', (req, res) => {
+  // Start a new session for the current user.
+  // Get the project ID from the request.
+})
 
 http.listen(port, () => console.log(`Listening on port ${port}`));
