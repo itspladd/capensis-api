@@ -37,9 +37,11 @@ app.post('/api/authenticate', (req,res) => {
         } else {
           // If there's not a match, clear the cookie and return null.
           req.session.userId = null;
-          res.json({you: "failed"});
+          res.json({username: null});
         }
       });
+  } else {
+    res.json({username: null})
   }
   // Set a cookie if the login is successful.
 })
