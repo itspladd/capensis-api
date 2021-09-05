@@ -11,7 +11,14 @@ module.exports = function (db) {
              })
   }
 
+  // The user parameter must have two keys: "username" and "hashed_password"
+  const addUser = user => {
+    return db.insert(`users`, user)
+             .then(rows => rows[0]);
+  }
+
   return {
-    getUsernameById
+    getUsernameById,
+    addUser
   }
 }

@@ -35,7 +35,6 @@ const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make
 
 // Attempt to log in a user from a cookie session.
 app.post('/api/authenticate', (req,res) => {
-  req.session.userId = 1;
   // If we have a cookie...
   if (req.session.userId) {
     // Look up the userId in the database.
@@ -69,7 +68,12 @@ app.post('/api/users', (req, res) => {
   const { username, rawPassword } = req.body;
   const saltRounds = 10;
   bcrypt.hash(rawPassword, saltRounds)
-        .then(hash => console.log(hash))
+        .then(hashed_password => db.addUser({username, hashed_password}))
+        .then(newUser => {
+          const { username, id } = newUser;
+          req.session.userId = id;
+          res.json({ username })
+        })
   // Set a cookie if the registration is successful.
 })
 
