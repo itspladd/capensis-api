@@ -1,0 +1,32 @@
+{
+  "name": "ship-fight-api",
+  "version": "1.0.0",
+  "description": "Backend API for a turn-based ship-battle game.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "db:reset": "node src/db/reset.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itspladd/ship-fight-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itspladd/ship-fight-api/issues"
+  },
+  "homepage": "https://github.com/itspladd/ship-fight-api#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "pg": "^8.6.0",
+    "socket.io": "^4.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12",
+    "pg-native": "^3.0.0"
+  }
+}

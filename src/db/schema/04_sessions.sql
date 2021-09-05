@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS sessions CASCADE;
+
+CREATE TABLE sessions(
+  id SERIAL PRIMARY KEY NOT NULL,
+  user_id INTEGER REFERENCES users(id),
+  project_id INTEGER REFERENCES projects(id),
+  start_time TIMESTAMP DEFAULT NOW(),
+  end_time TIMESTAMP DEFAULT NULL
+)
