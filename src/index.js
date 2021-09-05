@@ -26,9 +26,9 @@ const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make
   res.json({ you: "got the test response"})
 }); */
 
-// Tester route to make sure the DB is seeded.
+// Tester route to look at DB data.
 /* app.get('/api/users', (req, res) => {
-  db.query(`SELECT * FROM users`, [])
+  dbObj.query(`SELECT * FROM users`, [])
     .then(rows => res.json(rows))
 }) */
 
@@ -63,6 +63,14 @@ app.post('/api/login', (req, res) => {
       const response = id ? { username } : { username: null };
       res.json(response);
     })
+})
+
+
+// Log out the current user.
+app.post('/api/logout', (req, res) => {
+  console.log('In route POST /api/logout');
+  req.session.userId = null;
+  res.json({ username:null });
 })
 
 // Register a new user.
