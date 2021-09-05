@@ -1,17 +1,25 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
+const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const http = require('http').Server(app);
 const port = process.env.PORT || 8080;
 
+// Cookie session: for tracking the current user session.
 app.use(cookieSession({
   name: 'session',
   keys: ['userId']
 }))
 
-// db provides the query(), insert(), and update() functions.
-const db = require('./db')
+// Body parser: for receiving data in POST requests.
+app.use(bodyParser.json())
+
+// The "dbObj" object provides query(), insert(), and update() functions to interact with the PSQL database.
+const dbObj = require('./db')
+const dbHelpersBuilder = require('./db/dbHelpers'); // Grab the helper builder function
+const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make the helper functions
 
 // Tester route to make sure the server runs.
 /* app.get('/test', (req, res) => {
@@ -27,28 +35,41 @@ const db = require('./db')
 
 // Attempt to log in a user from a cookie session.
 app.post('/api/authenticate', (req,res) => {
+  req.session.userId = 1;
+  // If we have a cookie...
   if (req.session.userId) {
-    // Look up the userId in the database. If there's a match, return the username and leave the cookie alone.
-    db.query(`SELECT username FROM users WHERE id = $1`, [req.session.userId])
-      .then(rows => {
-        console.log(rows)
-        if (rows[0]) {
-          res.json(rows[0]);
-        } else {
-          // If there's not a match, clear the cookie and return null.
+    // Look up the userId in the database.
+    db.getUsernameById(req.session.userId)
+      .then(username => {
+        // If we got a null result, set the cookie to null.
+        if (!username) {
           req.session.userId = null;
-          res.json({username: null});
         }
+        // Regardless, send back the username (even if it's null - the client knows how to handle it)
+        res.json({ username });
       });
   } else {
+    // If we don't have a cookie, send back a null username.
     res.json({username: null})
   }
-  // Set a cookie if the login is successful.
 })
 
+// Attempt to validate a user with a supplied username/password.
+app.post('/api/login', (req, res) => {
+  console.log('In route POST /api/login')
+  const { username, rawPassword } = req.body;
+  console.log(username, rawPassword)
+})
+
+// Register a new user.
 app.post('/api/users', (req, res) => {
   // Register a new user with username and password.
   // Hash the password first!
+  console.log('In route POST /api/users')
+  const { username, rawPassword } = req.body;
+  const saltRounds = 10;
+  bcrypt.hash(rawPassword, saltRounds)
+        .then(hash => console.log(hash))
   // Set a cookie if the registration is successful.
 })
 
