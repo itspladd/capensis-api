@@ -1,3 +1,6 @@
+const bcrypt = require('bcrypt');
+const { raw } = require('express');
+
 module.exports = function (db) {
 
   const getUsernameById = id => {
@@ -12,9 +15,11 @@ module.exports = function (db) {
   }
 
   // The user parameter must have two keys: "username" and "hashed_password"
-  const addUser = user => {
-    return db.insert(`users`, user)
-             .then(rows => rows[0]);
+  const addUser = (username, rawPassword) => {
+    const saltRounds = 10;
+    return bcrypt.hash(rawPassword, saltRounds)
+                 .then(hashed_password => db.insert(`users`, {username, hashed_password}))
+                 .then(rows => rows[0])
   }
 
   return {

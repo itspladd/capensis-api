@@ -1,7 +1,6 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt');
 
 const app = express();
 const http = require('http').Server(app);
@@ -57,6 +56,7 @@ app.post('/api/authenticate', (req,res) => {
 app.post('/api/login', (req, res) => {
   console.log('In route POST /api/login')
   const { username, rawPassword } = req.body;
+  db.checkLogin(username, rawPassword)
   console.log(username, rawPassword)
 })
 
@@ -66,15 +66,13 @@ app.post('/api/users', (req, res) => {
   // Hash the password first!
   console.log('In route POST /api/users')
   const { username, rawPassword } = req.body;
-  const saltRounds = 10;
-  bcrypt.hash(rawPassword, saltRounds)
-        .then(hashed_password => db.addUser({username, hashed_password}))
-        .then(newUser => {
-          const { username, id } = newUser;
-          req.session.userId = id;
-          res.json({ username })
-        })
-  // Set a cookie if the registration is successful.
+  db.addUser(username, rawPassword)
+    .then(newUser => {
+      // Set a cookie and return the username if the registration is successful.
+      const { username, id } = newUser;
+      req.session.userId = id;
+      res.json({ username })
+    })
 })
 
 app.post('/api/projects', (req, res) => {
