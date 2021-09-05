@@ -1,15 +1,22 @@
 const express = require('express');
+const cookieSession = require('cookie-session');
+
 const app = express();
 const http = require('http').Server(app);
-
 const port = process.env.PORT || 8080;
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['userId']
+}))
 
 // db provides the query(), insert(), and update() functions.
 const db = require('./db')
 
 // Tester route to make sure the server runs.
-/* app.get('/', (req, res) => {
-  res.json({ you: "are on the root page"})
+/* app.get('/test', (req, res) => {
+  console.log('getting test')
+  res.json({ you: "got the test response"})
 }); */
 
 // Tester route to make sure the DB is seeded.
@@ -18,8 +25,22 @@ const db = require('./db')
     .then(rows => res.json(rows))
 }) */
 
-app.post('/api/login', (req,res) => {
-  // Attempt to login a user with a username and password.
+// Attempt to log in a user from a cookie session.
+app.post('/api/authenticate', (req,res) => {
+  if (req.session.userId) {
+    // Look up the userId in the database. If there's a match, return the username and leave the cookie alone.
+    db.query(`SELECT username FROM users WHERE id = $1`, [req.session.userId])
+      .then(rows => {
+        console.log(rows)
+        if (rows[0]) {
+          res.json(rows[0]);
+        } else {
+          // If there's not a match, clear the cookie and return null.
+          req.session.userId = null;
+          res.json({you: "failed"});
+        }
+      });
+  }
   // Set a cookie if the login is successful.
 })
 
