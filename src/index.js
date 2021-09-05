@@ -56,8 +56,13 @@ app.post('/api/authenticate', (req,res) => {
 app.post('/api/login', (req, res) => {
   console.log('In route POST /api/login')
   const { username, rawPassword } = req.body;
-  db.checkLogin(username, rawPassword)
-  console.log(username, rawPassword)
+  db.validLogin(username, rawPassword) // Check login validity, true/false response
+    .then(valid => valid ? db.getIdByUsername(username) : null) // Return the id or a null
+    .then(id => {
+      req.session.userId = id; // Set the cookie (either to the id or to null)
+      const response = id ? { username } : { username: null };
+      res.json(response);
+    })
 })
 
 // Register a new user.
