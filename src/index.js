@@ -27,6 +27,7 @@ const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make
 }); */
 
 // Tester route to look at DB data.
+// REMOVE BEFORE LIVE PUSH
 app.get('/api/users', (req, res) => {
   dbObj.query(`SELECT * FROM users`, [])
     .then(rows => res.json(rows))
@@ -91,6 +92,13 @@ app.post('/api/users', (req, res) => {
 app.post('/api/projects', (req, res) => {
   // Create a new project for the currently-logged-in user.
 })
+
+// Get this week's blocks for current user.
+app.get('/api/blocks/week', (req, res) => {
+  const userId = req.session.userId;
+  db.getWeeklyBlocksByUser(userId)
+    .then(data => res.json(data));
+});
 
 app.post('/api/blocks', (req, res) => {
   // Create a new block for the currently-logged-in user.

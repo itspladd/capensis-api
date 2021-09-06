@@ -48,10 +48,31 @@ module.exports = function (db) {
              });
   }
 
+  const getWeeklyBlocksByUser = (userId) => {
+    // Get Sunday and Saturday for this week.
+    const now = new Date();
+    const daysSinceSunday = now.getDay();
+    const msDayMultiplier = 1000*60*60*24;
+    const msSinceSunday = msDayMultiplier * daysSinceSunday;
+    const lastSundayMs = now.valueOf() - msSinceSunday;
+    const nextSaturdayMs = lastSundayMs + (msDayMultiplier * 6);
+    const lastSunday = new Date(lastSundayMs);
+    const nextSaturday = new Date(nextSaturdayMs)
+    console.log(`looking up blocks for user id ${userId} between ${lastSunday.toISOString()} and ${nextSaturday.toISOString()}`);
+
+    return db.query(`
+      SELECT * FROM blocks
+      WHERE user_id = $1
+      AND schedule_date BETWEEN $2 AND $3
+      ORDER BY schedule_date
+      `, [userId, lastSunday.toISOString(), nextSaturday.toISOString()])
+  }
+
   return {
     getUsernameById,
     addUser,
     validLogin,
-    getIdByUsername
+    getIdByUsername,
+    getWeeklyBlocksByUser
   }
 }
