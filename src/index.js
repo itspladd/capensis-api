@@ -98,6 +98,19 @@ app.get('/api/projects', (req, res) => {
 
 app.post('/api/projects', (req, res) => {
   // Create a new project for the currently-logged-in user.
+  const userId = req.session.userId;
+  const { projectTitle } = req.body
+  db.addProject(userId, projectTitle)
+    .then(project => res.json(project))
+})
+
+app.patch('/api/projects/:id', (req, res) => {
+  const userId = req.session.userId;
+  const projectId = req.params.id;
+  const { title } = req.body;
+  console.log(`updating ${projectId} to have title ${title}`);
+  db.updateProjectTitle(userId, projectId, title)
+    .then(rows => res.json(rows[0]))
 })
 
 // Get this week's blocks for current user.
