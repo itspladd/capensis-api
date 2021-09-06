@@ -48,24 +48,33 @@ module.exports = function (db) {
              });
   }
 
-  const getWeeklyBlocksByUser = (userId) => {
-    // Get Sunday and Saturday for this week.
-    const now = new Date();
-    const daysSinceSunday = now.getDay();
+  // Defaults to the current week, but can accept any target date.
+  const getWeeklyBlocksByUser = (userId, targetDate = new Date()) => {
+    // Get Sunday and Saturday for given week.
+    const daysSinceSunday = targetDate.getDay(); // Returns 0 for sunday, 1 for Monday, etc
     const msDayMultiplier = 1000*60*60*24;
     const msSinceSunday = msDayMultiplier * daysSinceSunday;
-    const lastSundayMs = now.valueOf() - msSinceSunday;
+    const lastSundayMs = targetDate.valueOf() - msSinceSunday;
     const nextSaturdayMs = lastSundayMs + (msDayMultiplier * 6);
     const lastSunday = new Date(lastSundayMs);
     const nextSaturday = new Date(nextSaturdayMs)
     console.log(`looking up blocks for user id ${userId} between ${lastSunday.toISOString()} and ${nextSaturday.toISOString()}`);
 
     return db.query(`
-      SELECT * FROM blocks
-      WHERE user_id = $1
+      SELECT blocks.*, projects.title FROM blocks
+        JOIN projects
+        ON blocks.project_id = projects.id
+      WHERE blocks.user_id = $1
       AND schedule_date BETWEEN $2 AND $3
-      ORDER BY schedule_date
+      ORDER BY start_time
       `, [userId, lastSunday.toISOString(), nextSaturday.toISOString()])
+  }
+
+  const getProjectsByUser = userId => {
+    return db.query(`
+      SELECT * FROM projects
+      WHERE user_id = $1
+      `, [userId])
   }
 
   return {
@@ -73,6 +82,7 @@ module.exports = function (db) {
     addUser,
     validLogin,
     getIdByUsername,
-    getWeeklyBlocksByUser
+    getWeeklyBlocksByUser,
+    getProjectsByUser
   }
 }

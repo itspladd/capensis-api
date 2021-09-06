@@ -89,14 +89,25 @@ app.post('/api/users', (req, res) => {
     })
 })
 
+app.get('/api/projects', (req, res) => {
+  // Get all projects for currently-logged-in user.
+  const userId = req.session.userId;
+  db.getProjectsByUser(userId)
+    .then(projects => res.json({ projects }))
+})
+
 app.post('/api/projects', (req, res) => {
   // Create a new project for the currently-logged-in user.
 })
 
 // Get this week's blocks for current user.
 app.get('/api/blocks/week', (req, res) => {
+  // If a date is supplied, use that date as the target.
+  // Otherwise, we use today's date.
+  const targetDate = req.query.date ? new Date(req.query.date) : new Date();
+
   const userId = req.session.userId;
-  db.getWeeklyBlocksByUser(userId)
+  db.getWeeklyBlocksByUser(userId, targetDate)
     .then(data => res.json(data));
 });
 
