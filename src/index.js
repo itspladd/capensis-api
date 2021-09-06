@@ -27,10 +27,10 @@ const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make
 }); */
 
 // Tester route to look at DB data.
-/* app.get('/api/users', (req, res) => {
+app.get('/api/users', (req, res) => {
   dbObj.query(`SELECT * FROM users`, [])
     .then(rows => res.json(rows))
-}) */
+})
 
 // Attempt to log in a user from a cookie session.
 app.post('/api/authenticate', (req,res) => {
