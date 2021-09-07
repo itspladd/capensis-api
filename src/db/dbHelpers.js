@@ -92,6 +92,24 @@ module.exports = function (db) {
     `, [title, projectId, userId]);
   }
 
+  // Creates a single new session in the DB and then returns the data about that session.
+  const startSession = sessionData => {
+    return db.insert('sessions', sessionData)
+             .then(rows => rows[0])
+  }
+
+  // "Stops" a session and returns the stopped session.
+  const stopSession = (userId, sessionId) => {
+    const nowStr = (new Date()).toISOString();
+    console.log(`Stopping session at: ${nowStr}`);
+    return db.query(`
+      UPDATE sessions SET end_time = $1
+      WHERE id = $2
+      AND user_id = $3
+      RETURNING *
+    `, [nowStr, sessionId, userId]);
+  }
+
   return {
     getUsernameById,
     addUser,
@@ -100,6 +118,8 @@ module.exports = function (db) {
     getWeeklyBlocksByUser,
     getProjectsByUser,
     addProject,
-    updateProjectTitle
+    updateProjectTitle,
+    startSession,
+    stopSession
   }
 }

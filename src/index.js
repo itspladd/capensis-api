@@ -132,6 +132,18 @@ app.post('/api/blocks', (req, res) => {
 app.post('/api/sessions', (req, res) => {
   // Start a new session for the current user.
   // Get the project ID from the request.
+  const user_id = req.session.userId;
+  const { project_id } = req.body;
+  db.startSession({ user_id, project_id })
+    .then(data => res.json(data))
+})
+
+app.patch('/api/sessions', (req, res) => {
+  // Stop a currently-running session.
+  const userId = req.session.userId;
+  const sessionId = req.body.session_id;
+  db.stopSession(userId, sessionId)
+           .then(rows => res.json(rows[0]))
 })
 
 http.listen(port, () => console.log(`Listening on port ${port}`));

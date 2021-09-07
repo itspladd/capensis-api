@@ -4,6 +4,6 @@ CREATE TABLE sessions(
   id SERIAL PRIMARY KEY NOT NULL,
   user_id INTEGER REFERENCES users(id),
   project_id INTEGER REFERENCES projects(id),
-  start_time TIMESTAMP DEFAULT NOW(),
+  start_time TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC'),
   end_time TIMESTAMP DEFAULT NULL
 )
