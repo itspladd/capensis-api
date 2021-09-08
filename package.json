@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
     "db:reset": "node src/db/reset.js",
-    "build": "node src/bin/resetdb.js"
+    "build": "db:reset"
   },
   "repository": {
     "type": "git",
