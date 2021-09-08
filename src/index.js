@@ -19,7 +19,8 @@ app.set('trust proxy', 1)
 // Cookie session: for tracking the current user session.
 app.use(cookieSession({
   name: 'session',
-  keys: ['userId']
+  keys: ['userId'],
+  sameSite: 'lax'
 }))
 
 // Body parser: for receiving data in POST requests.
