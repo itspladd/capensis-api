@@ -20,7 +20,7 @@ app.set('trust proxy', 1)
 app.use(cookieSession({
   name: 'session',
   keys: ['userId'],
-  sameSite: 'lax'
+  sameSite: 'none'
 }))
 
 // Body parser: for receiving data in POST requests.
