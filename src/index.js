@@ -1,10 +1,13 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
 const http = require('http').Server(app);
 const port = process.env.PORT || 8080;
+
+app.use(cors());
 
 // Cookie session: for tracking the current user session.
 app.use(cookieSession({

@@ -6,4 +6,4 @@ CREATE TABLE sessions(
   project_id INTEGER REFERENCES projects(id),
   start_time TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC'),
   end_time TIMESTAMP DEFAULT NULL
-)
+);
