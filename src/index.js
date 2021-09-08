@@ -129,12 +129,19 @@ app.post('/api/blocks', (req, res) => {
   // Get the project ID from the request.
 })
 
+app.get('/api/sessions/week', (req, res) => {
+  const userId = req.session.userId;
+  const targetDate = req.query.date ? new Date(req.query.date) : new Date();
+  return db.getWeeklySessions(userId, targetDate)
+           .then(data => res.json(data))
+})
+
 app.post('/api/sessions', (req, res) => {
   // Start a new session for the current user.
   // Get the project ID from the request.
-  const user_id = req.session.userId;
+  const userId = req.session.userId;
   const { project_id } = req.body;
-  db.startSession({ user_id, project_id })
+  db.startSession({ user_id: userId, project_id })
     .then(data => res.json(data))
 })
 
@@ -144,6 +151,13 @@ app.patch('/api/sessions', (req, res) => {
   const sessionId = req.body.session_id;
   db.stopSession(userId, sessionId)
            .then(rows => res.json(rows[0]))
+})
+
+app.get(`/api/reports/week`, (req, res) => {
+  const userId = req.session.userId;
+  const targetDate = req.query.date ? new Date(req.query.date) : new Date();
+  return db.getWeeklyReport(userId, targetDate)
+           .then(data => res.json(data))
 })
 
 http.listen(port, () => console.log(`Listening on port ${port}`));

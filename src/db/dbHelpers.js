@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
-const { raw } = require('express');
+
+const { getWeekBounds } = require('../helpers')
 
 module.exports = function (db) {
 
@@ -51,13 +52,7 @@ module.exports = function (db) {
   // Defaults to the current week, but can accept any target date.
   const getWeeklyBlocksByUser = (userId, targetDate = new Date()) => {
     // Get Sunday and Saturday for given week.
-    const daysSinceSunday = targetDate.getDay(); // Returns 0 for sunday, 1 for Monday, etc
-    const msDayMultiplier = 1000*60*60*24;
-    const msSinceSunday = msDayMultiplier * daysSinceSunday;
-    const lastSundayMs = targetDate.valueOf() - msSinceSunday;
-    const nextSaturdayMs = lastSundayMs + (msDayMultiplier * 6);
-    const lastSunday = new Date(lastSundayMs);
-    const nextSaturday = new Date(nextSaturdayMs)
+    const { lastSunday, nextSaturday } = getWeekBounds(targetDate);
     console.log(`looking up blocks for user id ${userId} between ${lastSunday.toISOString()} and ${nextSaturday.toISOString()}`);
 
     return db.query(`
@@ -101,13 +96,39 @@ module.exports = function (db) {
   // "Stops" a session and returns the stopped session.
   const stopSession = (userId, sessionId) => {
     const nowStr = (new Date()).toISOString();
-    console.log(`Stopping session at: ${nowStr}`);
+    console.log(`Stopping session at: ${nowStr}`)
     return db.query(`
       UPDATE sessions SET end_time = $1
       WHERE id = $2
       AND user_id = $3
       RETURNING *
     `, [nowStr, sessionId, userId]);
+  }
+
+  const getWeeklySessions = (userId, targetDate = new Date()) => {
+    const { lastSunday } = getWeekBounds(targetDate);
+    return db.query(`
+      SELECT * FROM sessions
+      WHERE user_id=$1
+      AND start_time > $2
+      `, [userId, lastSunday.toISOString()]);
+  }
+
+  const getWeeklyReport = (userId, targetDate = new Date()) => {
+    const { lastSunday, nextSaturday } = getWeekBounds(targetDate);
+    return db.query(`
+      SELECT
+        projects.id AS project_id,
+        SUM(sessions.end_time-sessions.start_time) AS sessions_total,
+        SUM(blocks.end_time-blocks.start_time) AS blocks_total
+      FROM projects
+        LEFT JOIN sessions ON projects.id = sessions.project_id
+        JOIN blocks ON projects.id = blocks.project_id
+      WHERE projects.user_id = $1
+        AND (sessions.id IS NULL OR (sessions.start_time > $2 AND sessions.end_time < $3))
+        AND (blocks.start_time > $2 AND blocks.end_time < $3)
+      GROUP BY projects.id
+      `, [userId, lastSunday.toISOString(), nextSaturday.toISOString()]);
   }
 
   return {
@@ -120,6 +141,8 @@ module.exports = function (db) {
     addProject,
     updateProjectTitle,
     startSession,
-    stopSession
+    stopSession,
+    getWeeklySessions,
+    getWeeklyReport
   }
 }
