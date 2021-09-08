@@ -21,10 +21,10 @@ const dbHelpersBuilder = require('./db/dbHelpers'); // Grab the helper builder f
 const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make the helper functions
 
 // Tester route to make sure the server runs.
-/* app.get('/test', (req, res) => {
+app.get('/test', (req, res) => {
   console.log('getting test')
   res.json({ you: "got the test response"})
-}); */
+});
 
 // Tester route to look at DB data.
 // REMOVE BEFORE LIVE PUSH
