@@ -26,10 +26,10 @@ app.get('/test', (req, res) => {
   res.json({ you: "got the test response"})
 });
 
-// Tester route to look at DB data.
+// Tester route to look at DB data to make sure DB is seeding properly.
 // REMOVE BEFORE LIVE PUSH
 app.get('/api/users', (req, res) => {
-  dbObj.query(`SELECT * FROM users`, [])
+  dbObj.query(`SELECT * FROM projects`, [])
     .then(rows => res.json(rows))
 })
 
