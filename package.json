@@ -1,24 +1,24 @@
 {
-  "name": "ship-fight-api",
+  "name": "timekeeper-api",
   "version": "1.0.0",
-  "description": "Backend API for a turn-based ship-battle game.",
-  "main": "index.js",
+  "description": "Backend API for a scheduling/time-tracking app.",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
     "db:reset": "node src/db/reset.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/itspladd/ship-fight-api.git"
+    "url": "git+https://github.com/itspladd/timekeeper-api.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/itspladd/ship-fight-api/issues"
+    "url": "https://github.com/itspladd/timekeeper-api/issues"
   },
-  "homepage": "https://github.com/itspladd/ship-fight-api#readme",
+  "homepage": "https://github.com/itspladd/timekeeper-api#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
