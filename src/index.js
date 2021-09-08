@@ -8,7 +8,7 @@ const http = require('http').Server(app);
 const port = process.env.PORT || 8080;
 
 const corsOptions = {
-  origin: ["localhost:3000", "https://www.pladd.dev"],
+  origin: ["https://www.pladd.dev"],
   credentials: true
 }
 
