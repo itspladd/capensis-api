@@ -9,7 +9,7 @@ const port = process.env.PORT || 8080;
 
 const corsOptions = {
   origin: ["https://www.pladd.dev"],
-  credentials: true
+  credentials: true,
 }
 
 app.use(cors(corsOptions))
@@ -20,7 +20,7 @@ app.set('trust proxy', 1)
 app.use(cookieSession({
   name: 'session',
   keys: ['userId'],
-  sameSite: 'none'
+  sameSite: process.env.PORT ? 'none' : 'lax'
 }))
 
 // Body parser: for receiving data in POST requests.
