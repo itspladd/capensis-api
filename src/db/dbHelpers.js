@@ -140,6 +140,11 @@ module.exports = function (db) {
       `, [userId, lastSunday.toISOString(), nextSaturday.toISOString()]);
   }
 
+  const addBlock = blockData => {
+    return db.insert('blocks', blockData)
+             .then(rows => rows[0])
+  }
+
   return {
     getUsernameById,
     addUser,
@@ -152,6 +157,7 @@ module.exports = function (db) {
     startSession,
     stopSession,
     getWeeklySessions,
-    getWeeklyReport
+    getWeeklyReport,
+    addBlock
   }
 }
