@@ -1,2 +1,2 @@
-# timekeeper-api
-Database API for the timeekeeper app.
+# capensis-api
+Database API for the Capensis app.
