@@ -128,15 +128,26 @@ module.exports = function (db) {
     return db.query(`
       SELECT
         projects.id AS project_id,
-        SUM(EXTRACT(EPOCH FROM (sessions.end_time-sessions.start_time))) AS sessions_total,
-        SUM(EXTRACT(EPOCH FROM (blocks.end_time-blocks.start_time))) AS blocks_total
+        sessionsum.total AS sessions_total,
+        blocksum.total AS blocks_total
       FROM projects
-        LEFT JOIN sessions ON projects.id = sessions.project_id
-        JOIN blocks ON projects.id = blocks.project_id
+        JOIN (
+          SELECT projects.id AS id,
+          SUM(EXTRACT(EPOCH FROM (sessions.end_time-sessions.start_time))) AS total
+          FROM projects
+            LEFT JOIN sessions ON projects.id = sessions.project_id
+          WHERE sessions.start_time BETWEEN $2 AND $3 OR sessions.id IS NULL
+          GROUP BY projects.id
+        ) sessionsum ON sessionsum.id = projects.id
+        JOIN (
+          SELECT projects.id AS id,
+          SUM(EXTRACT(EPOCH FROM (blocks.end_time-blocks.start_time))) AS total
+          FROM projects
+            JOIN blocks ON projects.id = blocks.project_id
+          WHERE blocks.start_time BETWEEN $2 AND $3
+          GROUP BY projects.id
+        ) blocksum ON blocksum.id = projects.id
       WHERE projects.user_id = $1
-        AND (sessions.id IS NULL OR (sessions.start_time BETWEEN $2 AND $3))
-        AND (blocks.start_time BETWEEN $2 AND $3)
-      GROUP BY projects.id
       `, [userId, lastSunday.toISOString(), nextSaturday.toISOString()]);
   }
 
