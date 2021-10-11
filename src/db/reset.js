@@ -41,13 +41,14 @@ const clearMigrationLogging = function() {
 }
 
 try {
-    console.log( `-> Connecting to PG using ${connectionString} ...` );
-    client.connectSync(connectionString);
-    runSchemaFiles();
-    runSeedFiles();
-    clearMigrationLogging();
-    client.end();
+  if (process.env.NODE_ENV !== 'DEVELOPMENT') throw new Error("Don't try to reset the live database, dingus")
+  console.log( `-> Connecting to PG using ${connectionString} ...` );
+  client.connectSync(connectionString);
+  runSchemaFiles();
+  runSeedFiles();
+  clearMigrationLogging();
+  client.end();
 } catch (err) {
-    console.error(chalk.red( `Failed due to error: ${err}` ));
-    client.end();
+  console.error(chalk.red( `Failed due to error: ${err}` ));
+  client.end();
 }
