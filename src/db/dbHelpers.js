@@ -114,6 +114,17 @@ module.exports = function (db) {
       `, [userId, lastSunday.toISOString()]);
   }
 
+  // Get the most recent unfinished session for this user.
+  const getCurrentSession = (userId) => {
+    return db.query(`
+      SELECT * FROM sessions
+      WHERE user_id=$1
+      AND end_time IS NULL
+      ORDER BY start_time DESC
+      LIMIT 1
+      `, [userId]);
+  }
+
   // getWeeklyReport finds every project that:
   // 1. Belongs to this user
   // 2. Has blocks scheduled this week
@@ -168,6 +179,7 @@ module.exports = function (db) {
     startSession,
     stopSession,
     getWeeklySessions,
+    getCurrentSession,
     getWeeklyReport,
     addBlock
   }
