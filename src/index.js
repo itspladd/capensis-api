@@ -158,6 +158,14 @@ app.get('/api/sessions/week', (req, res) => {
            .then(data => res.json(data))
 })
 
+// Get the most recent session that is still running for this user, if any.
+app.get('/api/sessions/current', (req, res) => {
+  const userId = req.session.userId;
+  const targetDate = req.query.date ? new Date(req.query.date) : new Date();
+  return db.getCurrentSession(userId)
+           .then(session => res.json(session))
+})
+
 app.post('/api/sessions', (req, res) => {
   // Start a new session for the current user.
   // Get the project ID from the request.
