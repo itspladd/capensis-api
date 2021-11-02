@@ -105,6 +105,12 @@ module.exports = function (db) {
     `, [nowStr, sessionId, userId]);
   }
 
+  // Updates a session with new start/end times.
+  const updateSession = sessionData => {
+    const { session_id, start_time, end_time } = sessionData
+    return db.update('sessions', session_id, {start_time, end_time});
+  }
+
   const getWeeklySessions = (userId, targetDate = new Date()) => {
     const { lastSunday } = getWeekBounds(targetDate);
     return db.query(`
