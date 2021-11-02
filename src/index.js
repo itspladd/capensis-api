@@ -183,6 +183,14 @@ app.patch('/api/sessions', (req, res) => {
            .then(rows => res.json(rows[0]))
 })
 
+app.patch('/api/sessions/:sessionId', (req, res) =>{
+  // Change the start or stop time of a session.
+  const user_id = req.session.userId;
+  const session_id = req.params.sessionId;
+  const { start_time, end_time }
+  return db.updateSession({ user_id, session_id, start_time, end_time})
+})
+
 app.get(`/api/reports/week`, (req, res) => {
   const userId = req.session.userId;
   const targetDate = req.query.date ? new Date(req.query.date) : new Date();
