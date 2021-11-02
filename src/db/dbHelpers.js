@@ -142,7 +142,7 @@ module.exports = function (db) {
         sessionsum.total AS sessions_total,
         blocksum.total AS blocks_total
       FROM projects
-        JOIN (
+        LEFT JOIN (
           SELECT projects.id AS id,
           SUM(EXTRACT(EPOCH FROM (sessions.end_time-sessions.start_time))) AS total
           FROM projects
