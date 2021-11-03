@@ -152,8 +152,10 @@ app.post('/api/blocks', (req, res) => {
 })
 
 app.get('/api/sessions/week', (req, res) => {
-  const userId = req.session.userId;
+  // If a date is supplied, use that date as the target.
+  // Otherwise, we use today's date.
   const targetDate = req.query.date ? new Date(req.query.date) : new Date();
+  const userId = req.session.userId;
   return db.getWeeklySessions(userId, targetDate)
            .then(data => res.json(data))
 })
