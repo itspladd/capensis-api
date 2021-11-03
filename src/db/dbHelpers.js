@@ -112,12 +112,17 @@ module.exports = function (db) {
   }
 
   const getWeeklySessions = (userId, targetDate = new Date()) => {
-    const { lastSunday } = getWeekBounds(targetDate);
+    const { lastSunday, nextSaturday } = getWeekBounds(targetDate);
+    console.log(lastSunday.toISOString())
     return db.query(`
-      SELECT * FROM sessions
-      WHERE user_id=$1
-      AND start_time > $2
-      `, [userId, lastSunday.toISOString()]);
+      SELECT sessions.*, projects.title
+      FROM sessions
+      JOIN projects
+        ON projects.id = sessions.project_id
+      WHERE sessions.user_id=$1
+      AND sessions.start_time >= $2
+      AND sessions.end_time <= $3
+      `, [userId, lastSunday.toISOString(), nextSaturday.toISOString()]);
   }
 
   // Get the most recent unfinished session for this user.
