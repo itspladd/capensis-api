@@ -189,6 +189,7 @@ module.exports = function (db) {
     updateProjectTitle,
     startSession,
     stopSession,
+    updateSession,
     getWeeklySessions,
     getCurrentSession,
     getWeeklyReport,
