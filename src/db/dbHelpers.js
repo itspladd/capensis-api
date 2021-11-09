@@ -105,6 +105,14 @@ module.exports = function (db) {
     `, [nowStr, sessionId, userId]);
   }
 
+  const deleteSession = (userId, sessionId) => {
+    return db.query(`
+    DELETE FROM sessions
+    WHERE user_id = $1 AND id = $2
+    RETURNING *
+    `, [userId, sessionId])
+  }
+
   // Updates a session with new start/end times.
   const updateSession = sessionData => {
     const { session_id, start_time, end_time } = sessionData
@@ -190,6 +198,7 @@ module.exports = function (db) {
     startSession,
     stopSession,
     updateSession,
+    deleteSession,
     getWeeklySessions,
     getCurrentSession,
     getWeeklyReport,

@@ -194,6 +194,13 @@ app.patch('/api/sessions/:sessionId', (req, res) =>{
            .then(rows => res.json(rows[0]))
 })
 
+app.delete('/api/sessions/:sessionId', (req, res) => {
+  const userId = req.session.userId;
+  const sessionId = req.params.sessionId;
+  return db.deleteSession(userId, sessionId)
+           .then(rows => res.json(rows[0]));
+})
+
 app.get(`/api/reports/week`, (req, res) => {
   const userId = req.session.userId;
   const targetDate = req.query.date ? new Date(req.query.date) : new Date();
