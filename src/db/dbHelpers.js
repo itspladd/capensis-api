@@ -130,6 +130,7 @@ module.exports = function (db) {
       WHERE sessions.user_id=$1
       AND sessions.start_time >= $2
       AND sessions.end_time <= $3
+      ORDER BY sessions.project_id DESC, sessions.start_time DESC
       `, [userId, lastSunday.toISOString(), nextSaturday.toISOString()]);
   }
 
