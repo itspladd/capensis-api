@@ -105,13 +105,33 @@ module.exports = function (db) {
     `, [nowStr, sessionId, userId]);
   }
 
-  const getWeeklySessions = (userId, targetDate = new Date()) => {
-    const { lastSunday } = getWeekBounds(targetDate);
+  const deleteSession = (userId, sessionId) => {
     return db.query(`
-      SELECT * FROM sessions
-      WHERE user_id=$1
-      AND start_time > $2
-      `, [userId, lastSunday.toISOString()]);
+    DELETE FROM sessions
+    WHERE user_id = $1 AND id = $2
+    RETURNING *
+    `, [userId, sessionId])
+  }
+
+  // Updates a session with new start/end times.
+  const updateSession = sessionData => {
+    const { session_id, start_time, end_time } = sessionData
+    return db.update('sessions', session_id, {start_time, end_time});
+  }
+
+  const getWeeklySessions = (userId, targetDate = new Date()) => {
+    const { lastSunday, nextSaturday } = getWeekBounds(targetDate);
+    console.log(lastSunday.toISOString())
+    return db.query(`
+      SELECT sessions.*, projects.title
+      FROM sessions
+      JOIN projects
+        ON projects.id = sessions.project_id
+      WHERE sessions.user_id=$1
+      AND sessions.start_time >= $2
+      AND sessions.end_time <= $3
+      ORDER BY sessions.project_id DESC, sessions.start_time DESC
+      `, [userId, lastSunday.toISOString(), nextSaturday.toISOString()]);
   }
 
   // Get the most recent unfinished session for this user.
@@ -178,6 +198,8 @@ module.exports = function (db) {
     updateProjectTitle,
     startSession,
     stopSession,
+    updateSession,
+    deleteSession,
     getWeeklySessions,
     getCurrentSession,
     getWeeklyReport,

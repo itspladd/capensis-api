@@ -152,8 +152,10 @@ app.post('/api/blocks', (req, res) => {
 })
 
 app.get('/api/sessions/week', (req, res) => {
-  const userId = req.session.userId;
+  // If a date is supplied, use that date as the target.
+  // Otherwise, we use today's date.
   const targetDate = req.query.date ? new Date(req.query.date) : new Date();
+  const userId = req.session.userId;
   return db.getWeeklySessions(userId, targetDate)
            .then(data => res.json(data))
 })
@@ -181,6 +183,22 @@ app.patch('/api/sessions', (req, res) => {
   const sessionId = req.body.session_id;
   db.stopSession(userId, sessionId)
            .then(rows => res.json(rows[0]))
+})
+
+app.patch('/api/sessions/:sessionId', (req, res) =>{
+  // Change the start or stop time of a session.
+  const user_id = req.session.userId;
+  const session_id = req.params.sessionId;
+  const { start_time, end_time } = req.body;
+  return db.updateSession({ session_id, start_time, end_time })
+           .then(rows => res.json(rows[0]))
+})
+
+app.delete('/api/sessions/:sessionId', (req, res) => {
+  const userId = req.session.userId;
+  const sessionId = req.params.sessionId;
+  return db.deleteSession(userId, sessionId)
+           .then(rows => res.json(rows[0]));
 })
 
 app.get(`/api/reports/week`, (req, res) => {
