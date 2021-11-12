@@ -28,8 +28,9 @@ app.use(bodyParser.json())
 
 // The "dbObj" object provides query(), insert(), and update() functions to interact with the PSQL database.
 const dbObj = require('./db')
+const helpers = require('./helpers')
 const dbHelpersBuilder = require('./db/helpers'); // Grab the helper builder function
-const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make the helper functions
+const db = dbHelpersBuilder(dbObj, helpers); // Give the db object to the builder to make the helper functions
 
 // Tester route to make sure the server runs.
 app.get('/test', (req, res) => {
@@ -68,7 +69,6 @@ app.post('/api/login', (req, res) => {
       res.json(response);
     })
 })
-
 
 // Log out the current user.
 app.post('/api/logout', (req, res) => {
