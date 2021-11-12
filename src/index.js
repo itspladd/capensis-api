@@ -28,21 +28,15 @@ app.use(bodyParser.json())
 
 // The "dbObj" object provides query(), insert(), and update() functions to interact with the PSQL database.
 const dbObj = require('./db')
-const dbHelpersBuilder = require('./db/dbHelpers'); // Grab the helper builder function
-const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make the helper functions
+const helpers = require('./helpers')
+const dbHelpersBuilder = require('./db/helpers'); // Grab the helper builder function
+const db = dbHelpersBuilder(dbObj, helpers); // Give the db object to the builder to make the helper functions
 
 // Tester route to make sure the server runs.
 app.get('/test', (req, res) => {
   console.log('getting test')
   res.json({ you: "got the test response"})
 });
-
-// Tester route to look at DB data to make sure DB is seeding properly.
-// REMOVE BEFORE LIVE PUSH
-app.get('/api/users', (req, res) => {
-  dbObj.query(`SELECT * FROM projects`, [])
-    .then(rows => res.json(rows))
-})
 
 // Attempt to log in a user from a cookie session.
 app.post('/api/authenticate', (req,res) => {
@@ -66,8 +60,6 @@ app.post('/api/authenticate', (req,res) => {
 
 // Attempt to validate a user with a supplied username/password.
 app.post('/api/login', (req, res) => {
-  console.log('In route POST /api/login')
-  console.log(req.session)
   const { username, rawPassword } = req.body;
   db.validLogin(username, rawPassword) // Check login validity, true/false response
     .then(valid => valid ? db.getIdByUsername(username) : null) // Return the id or a null
@@ -77,7 +69,6 @@ app.post('/api/login', (req, res) => {
       res.json(response);
     })
 })
-
 
 // Log out the current user.
 app.post('/api/logout', (req, res) => {
