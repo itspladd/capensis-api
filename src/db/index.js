@@ -92,7 +92,7 @@ module.exports = {
   },
 
   // Updates ONE entry in a table by ID.
-  update: function(table, id, data, restrictions) {
+  update: function(table, id, data, restrictions = {}) {
     // Start the update query
     let queryString = `
       UPDATE ${table}

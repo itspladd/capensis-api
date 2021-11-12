@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-
 module.exports = function (db, helpers) {
 
   const userHelpers = require('./userHelpers')(db, helpers)
