@@ -59,8 +59,6 @@ app.post('/api/authenticate', (req,res) => {
 
 // Attempt to validate a user with a supplied username/password.
 app.post('/api/login', (req, res) => {
-  console.log('In route POST /api/login')
-  console.log(req.session)
   const { username, rawPassword } = req.body;
   db.validLogin(username, rawPassword) // Check login validity, true/false response
     .then(valid => valid ? db.getIdByUsername(username) : null) // Return the id or a null
