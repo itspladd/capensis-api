@@ -28,7 +28,7 @@ app.use(bodyParser.json())
 
 // The "dbObj" object provides query(), insert(), and update() functions to interact with the PSQL database.
 const dbObj = require('./db')
-const dbHelpersBuilder = require('./db/dbHelpers'); // Grab the helper builder function
+const dbHelpersBuilder = require('./db/helpers'); // Grab the helper builder function
 const db = dbHelpersBuilder(dbObj); // Give the db object to the builder to make the helper functions
 
 // Tester route to make sure the server runs.
@@ -36,13 +36,6 @@ app.get('/test', (req, res) => {
   console.log('getting test')
   res.json({ you: "got the test response"})
 });
-
-// Tester route to look at DB data to make sure DB is seeding properly.
-// REMOVE BEFORE LIVE PUSH
-app.get('/api/users', (req, res) => {
-  dbObj.query(`SELECT * FROM projects`, [])
-    .then(rows => res.json(rows))
-})
 
 // Attempt to log in a user from a cookie session.
 app.post('/api/authenticate', (req,res) => {

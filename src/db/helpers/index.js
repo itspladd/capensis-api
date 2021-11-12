@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-const { getWeekBounds } = require('../helpers')
+const { getWeekBounds } = require('../../helpers')
 
 module.exports = function (db) {
 

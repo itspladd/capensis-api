@@ -1,4 +1,3 @@
-
 // Returns two Date objects representing last Sunday at midnight and next Saturday at midnight
 // Calculates frm the given input date.
 const getWeekBounds = date => {
