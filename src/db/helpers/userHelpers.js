@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt')
+
 module.exports = function (db) {
   const getUsernameById = id => {
     return db.query(`SELECT username FROM users WHERE id = $1`, [id])
