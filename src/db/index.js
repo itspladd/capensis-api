@@ -92,7 +92,7 @@ module.exports = {
   },
 
   // Updates ONE entry in a table by ID.
-  update: function(table, id, data) {
+  update: function(table, id, data, restrictions) {
     // Start the update query
     let queryString = `
       UPDATE ${table}
@@ -114,14 +114,21 @@ module.exports = {
       varNumber++
     }
 
-    // Add the target ID as the final parameter and add "WHERE id = $[num]"
+    // Add the target ID as the next parameter and add "WHERE id = $[num]"
     // to the query.
     queryParams.push(id)
     queryString += `
       WHERE id = $${varNumber}
       `
-    queryString += `RETURNING *`
+    varNumber++
 
+    // Add any restrictions to the query as AND [name] = $[num]
+    for (let key of Object.keys(restrictions)) {
+      queryParams.push(restrictions[key])
+      queryString += ` AND ${key} = $${varNumber}
+      `
+    }
+    queryString += `RETURNING *`
     return this.query(queryString, queryParams)
       .catch(err => console.error(err));
   }
