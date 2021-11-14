@@ -2,7 +2,6 @@ module.exports = function (db, helpers) {
   // Creates a single new session in the DB and then returns the data about that session.
   const startSession = sessionData => {
     return db.insert('sessions', sessionData)
-              .then(rows => rows[0])
   }
 
   // "Stops" a session and returns the stopped session.
@@ -27,8 +26,8 @@ module.exports = function (db, helpers) {
 
   // Updates a session with new start/end times.
   const updateSession = sessionData => {
-    const { session_id, start_time, end_time } = sessionData
-    return db.update('sessions', session_id, {start_time, end_time});
+    const { user_id, session_id, start_time, end_time } = sessionData
+    return db.update('sessions', session_id, {start_time, end_time, user_id});
   }
 
   const getWeeklySessions = (userId, targetDate = new Date()) => {
