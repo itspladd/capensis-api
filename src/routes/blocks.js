@@ -18,6 +18,22 @@ module.exports = function (db) {
     // Get the project ID from the request.
   })
 
+  router.patch('/:id', (req, res) => {
+    const { startTime, endTime, project, blockId } = req.body;
+    const newData = {
+      start_time: startTime,
+      end_time: endTime,
+      project_id: Number(project)
+    }
+    return db.updateBlock(newData, blockId, req.currentUser)
+      .then(res.json)
+  })
+
+  router.delete('/:id', (req, res) => {
+    return db.deleteBlock(req.currentUser, id)
+      .then(res.json);
+  })
+
   // Get this week's blocks for current user.
   router.get('/week', (req, res) => {
     // If a date is supplied, use that date as the target.

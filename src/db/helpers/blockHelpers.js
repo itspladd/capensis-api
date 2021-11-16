@@ -4,7 +4,7 @@ module.exports = function (db, helpers) {
              .then(rows => rows[0])
   }
 
-  const updateBlock = (blockData, id) => {
+  const updateBlock = (blockData, id, userId) => {
     return db.update('blocks', id, blockData)
   }
 
