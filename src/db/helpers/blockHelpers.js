@@ -9,6 +9,7 @@ module.exports = function (db, helpers) {
   }
 
   const deleteBlock = (userId, blockId) => {
+    console.log('deleting:', userId, blockId)
     return db.query(`
     DELETE FROM blocks
     WHERE user_id = $1 AND id = $2

@@ -19,19 +19,21 @@ module.exports = function (db) {
   })
 
   router.patch('/:id', (req, res) => {
-    const { startTime, endTime, project, blockId } = req.body;
+    const { startTime, endTime, project } = req.body;
+    const { id } = req.params
     const newData = {
       start_time: startTime,
       end_time: endTime,
       project_id: Number(project)
     }
-    return db.updateBlock(newData, blockId, req.currentUser)
+    return db.updateBlock(newData, id, req.currentUser)
       .then(res.json)
   })
 
   router.delete('/:id', (req, res) => {
+    const { id } = req.params
     return db.deleteBlock(req.currentUser, id)
-      .then(res.json);
+      .then((data) => res.json(data));
   })
 
   // Get this week's blocks for current user.
