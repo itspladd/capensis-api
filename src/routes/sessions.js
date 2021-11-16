@@ -6,18 +6,16 @@ module.exports = function (db) {
   router.post('/', (req, res) => {
     // Start a new session for the current user.
     // Get the project ID from the request.
-    const userId = req.session.userId;
     const { project_id } = req.body;
-    db.startSession({ user_id: userId, project_id })
-      .then(data => res.json(data))
+    db.startSession({ user_id: req.currentUser, project_id })
+      .then(rows => res.json(rows))
   })
 
   router.patch('/', (req, res) => {
     // Stop a currently-running session.
-    const userId = req.session.userId;
-    const sessionId = req.body.session_id;
-    db.stopSession(userId, sessionId)
-             .then(rows => res.json(rows[0]))
+    const { id } = req.body;
+    db.stopSession(req.currentUser, id)
+      .then(rows => res.json(rows[0]))
   })
 
   // Return all sessions for a given week
@@ -25,32 +23,27 @@ module.exports = function (db) {
     // If a date is supplied, use that date as the target.
     // Otherwise, we use today's date.
     const targetDate = req.query.date ? new Date(req.query.date) : new Date();
-    const userId = req.session.userId;
-    return db.getWeeklySessions(userId, targetDate)
+    return db.getWeeklySessions(req.currentUser, targetDate)
              .then(data => res.json(data))
   })
 
   // Get the most recent session that is still running for this user, if any.
   router.get('/current', (req, res) => {
-    const userId = req.session.userId;
-    const targetDate = req.query.date ? new Date(req.query.date) : new Date();
-    return db.getCurrentSession(userId)
-             .then(session => res.json(session))
+    return db.getCurrentSession(req.currentUser)
+             .then(rows => res.json(rows))
   })
 
   router.patch('/:sessionId', (req, res) =>{
     // Change the start or stop time of a session.
-    const user_id = req.session.userId;
     const session_id = req.params.sessionId;
     const { start_time, end_time } = req.body;
-    return db.updateSession({ session_id, start_time, end_time })
+    return db.updateSession({ user_id: req.currentUser, session_id, start_time, end_time })
              .then(rows => res.json(rows[0]))
   })
 
   router.delete('/:sessionId', (req, res) => {
-    const userId = req.session.userId;
     const sessionId = req.params.sessionId;
-    return db.deleteSession(userId, sessionId)
+    return db.deleteSession(req.currentUser, sessionId)
              .then(rows => res.json(rows[0]));
   })
 

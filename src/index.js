@@ -26,6 +26,11 @@ app.use(cookieSession({
 // Body parser: for receiving data in POST requests.
 app.use(bodyParser.json())
 
+app.use((req, res, next) => {
+  req.currentUser = req.session.userId;
+  next();
+})
+
 // The "dbObj" object provides query(), insert(), and update() functions to interact with the PSQL database.
 const dbObj = require('./db')
 const helpers = require('./helpers')
