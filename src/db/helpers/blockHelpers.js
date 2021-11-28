@@ -4,6 +4,19 @@ module.exports = function (db, helpers) {
              .then(rows => rows[0])
   }
 
+  const updateBlock = (blockData, id, userId) => {
+    return db.update('blocks', id, blockData)
+  }
+
+  const deleteBlock = (userId, blockId) => {
+    console.log('deleting:', userId, blockId)
+    return db.query(`
+    DELETE FROM blocks
+    WHERE user_id = $1 AND id = $2
+    RETURNING *
+    `, [userId, blockId])
+  }
+
   // Defaults to the current week, but can accept any target date.
   const getWeeklyBlocksByUser = (userId, targetDate = new Date()) => {
     // Get Sunday and Saturday for given week.
@@ -22,6 +35,8 @@ module.exports = function (db, helpers) {
 
   return {
     addBlock,
+    updateBlock,
+    deleteBlock,
     getWeeklyBlocksByUser
   }
 }
