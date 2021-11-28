@@ -27,7 +27,7 @@ module.exports = function (db) {
       project_id: Number(project)
     }
     return db.updateBlock(newData, id, req.currentUser)
-      .then(res.json)
+      .then(data => res.json(data))
   })
 
   router.delete('/:id', (req, res) => {
