@@ -7,14 +7,14 @@ module.exports = function (db) {
     // If we have a cookie...
     if (req.session.userId) {
       // Look up the userId in the database.
-      db.getUsernameById(req.session.userId)
-        .then(username => {
+      db.getUserById(req.session.userId)
+        .then(user => {
           // If we got a null result, set the cookie to null.
-          if (!username) {
+          if (!user) {
             req.session.userId = null;
           }
-          // Regardless, send back the username (even if it's null - the client knows how to handle it)
-          res.json({ username });
+          // Regardless, send back the user (even if it's null - the client knows how to handle it)
+          res.json({ user });
         });
     } else {
       // If we don't have a cookie, send back a null username.
