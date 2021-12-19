@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt')
 
 module.exports = function (db) {
-  const getUsernameById = id => {
+  const getUserById = id => {
     return db.query(`SELECT username FROM users WHERE id = $1`, [id])
              .then(rows => {
                if (rows[0]) {
-                 return rows[0].username
+                 return rows[0]
                } else {
                  return null;
                }
@@ -48,7 +48,7 @@ module.exports = function (db) {
 
   return {
     addUser,
-    getUsernameById,
+    getUserById,
     getIdByUsername,
     validLogin
   }
