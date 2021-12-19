@@ -12,11 +12,11 @@ module.exports = function (db) {
              })
   };
 
-  const getIdByUsername = username => {
-    return db.query(`SELECT id FROM users WHERE username = $1`, [username])
+  const getUserByUsername = username => {
+    return db.query(`SELECT username, id FROM users WHERE username = $1`, [username])
              .then(rows => {
                if (rows[0]) {
-                 return rows[0].id;
+                 return rows[0];
                } else {
                  return null;
                }
@@ -49,7 +49,7 @@ module.exports = function (db) {
   return {
     addUser,
     getUserById,
-    getIdByUsername,
+    getUserByUsername,
     validLogin
   }
 }

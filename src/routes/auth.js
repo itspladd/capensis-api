@@ -26,11 +26,11 @@ module.exports = function (db) {
   router.post('/login', (req, res) => {
     const { username, rawPassword } = req.body;
     db.validLogin(username, rawPassword) // Check login validity, true/false response
-      .then(valid => valid ? db.getIdByUsername(username) : null) // Return the id or a null
-      .then(id => {
-        req.session.userId = id; // Set the cookie (either to the id or to null)
-        const response = id ? { username } : { username: null };
-        res.json(response);
+      .then(valid => valid ? db.getUserByUsername(username) : null) // Return the id or a null
+      .then(user => {
+        // If login was successful, set cookie. Otherwise, clear cookie.
+        req.session.userId = user ? user.id : null;
+        res.json({ user });
       })
   })
 
