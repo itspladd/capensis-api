@@ -7,7 +7,7 @@ module.exports = function (db) {
     // Get all projects for currently-logged-in user.
     const userId = req.session.userId;
     db.getProjectsByUser(userId)
-      .then(projects => res.json({ projects }))
+      .then(projects => res.json(projects))
   })
 
   router.post('/', (req, res) => {
