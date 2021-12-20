@@ -14,7 +14,7 @@ module.exports = function (db) {
             req.session.userId = null;
           }
           // Regardless, send back the user (even if it's null - the client knows how to handle it)
-          res.json({ user });
+          res.json(user);
         });
     } else {
       // If we don't have a cookie, send back a null username.
@@ -30,7 +30,7 @@ module.exports = function (db) {
       .then(user => {
         // If login was successful, set cookie. Otherwise, clear cookie.
         req.session.userId = user ? user.id : null;
-        res.json({ user });
+        res.json(user);
       })
   })
 
