@@ -6,6 +6,7 @@ module.exports = function (db, helpers) {
 
   const updateBlock = (blockData, id, userId) => {
     return db.update('blocks', id, blockData)
+      .then(rows => rows[0])
   }
 
   const deleteBlock = (userId, blockId) => {
