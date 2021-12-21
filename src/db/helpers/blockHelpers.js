@@ -12,10 +12,11 @@ module.exports = function (db, helpers) {
   const deleteBlock = (userId, blockId) => {
     console.log('deleting:', userId, blockId)
     return db.query(`
-    DELETE FROM blocks
-    WHERE user_id = $1 AND id = $2
-    RETURNING *
-    `, [userId, blockId])
+      DELETE FROM blocks
+      WHERE user_id = $1 AND id = $2
+      RETURNING *
+      `, [userId, blockId])
+      .then(rows => rows[0])
   }
 
   // Defaults to the current week, but can accept any target date.

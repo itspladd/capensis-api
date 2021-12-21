@@ -18,7 +18,7 @@ module.exports = function (db) {
         });
     } else {
       // If we don't have a cookie, send back a null username.
-      res.json({username: null})
+      res.json(null)
     }
   })
 
