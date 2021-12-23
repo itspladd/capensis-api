@@ -3,10 +3,11 @@ const express = require('express');
 module.exports = function (db) {
   const router = express.Router();
 
+  // Create a new block for the currently-logged-in user.
   router.post('/', (req, res) => {
     const userId = req.session.userId
     const { startTime, endTime, project } = req.body;
-    const blockData = { 
+    const blockData = {
       start_time: startTime,
       end_time: endTime,
       project_id: Number(project),
@@ -14,8 +15,7 @@ module.exports = function (db) {
     }
     return db.addBlock(blockData)
             .then(block => res.json(block))
-    // Create a new block for the currently-logged-in user.
-    // Get the project ID from the request.
+
   })
 
   router.patch('/:id', (req, res) => {

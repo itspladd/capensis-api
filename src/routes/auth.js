@@ -7,18 +7,18 @@ module.exports = function (db) {
     // If we have a cookie...
     if (req.session.userId) {
       // Look up the userId in the database.
-      db.getUsernameById(req.session.userId)
-        .then(username => {
+      db.getUserById(req.session.userId)
+        .then(user => {
           // If we got a null result, set the cookie to null.
-          if (!username) {
+          if (!user) {
             req.session.userId = null;
           }
-          // Regardless, send back the username (even if it's null - the client knows how to handle it)
-          res.json({ username });
+          // Regardless, send back the user (even if it's null - the client knows how to handle it)
+          res.json(user);
         });
     } else {
       // If we don't have a cookie, send back a null username.
-      res.json({username: null})
+      res.json(null)
     }
   })
 
@@ -26,11 +26,11 @@ module.exports = function (db) {
   router.post('/login', (req, res) => {
     const { username, rawPassword } = req.body;
     db.validLogin(username, rawPassword) // Check login validity, true/false response
-      .then(valid => valid ? db.getIdByUsername(username) : null) // Return the id or a null
-      .then(id => {
-        req.session.userId = id; // Set the cookie (either to the id or to null)
-        const response = id ? { username } : { username: null };
-        res.json(response);
+      .then(valid => valid ? db.getUserByUsername(username) : null) // Return the id or a null
+      .then(user => {
+        // If login was successful, set cookie. Otherwise, clear cookie.
+        req.session.userId = user ? user.id : null;
+        res.json(user);
       })
   })
 

@@ -8,7 +8,7 @@ module.exports = function (db) {
     // Get the project ID from the request.
     const { project_id } = req.body;
     db.startSession({ user_id: req.currentUser, project_id })
-      .then(rows => res.json(rows))
+      .then(rows => res.json(rows[0]))
   })
 
   router.patch('/', (req, res) => {
@@ -30,7 +30,7 @@ module.exports = function (db) {
   // Get the most recent session that is still running for this user, if any.
   router.get('/current', (req, res) => {
     return db.getCurrentSession(req.currentUser)
-             .then(rows => res.json(rows))
+             .then(rows => res.json(rows[0]))
   })
 
   router.patch('/:sessionId', (req, res) =>{
